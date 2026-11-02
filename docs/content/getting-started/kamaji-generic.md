@@ -252,7 +252,8 @@ curl -k https://${TENANT_ADDR}:${TENANT_PORT}/version
 The `kubeconfig` required to access the Tenant Control Plane is stored in a secret:
 
 ```bash
-kubectl get secrets -n ${TENANT_NAMESPACE} ${TENANT_NAME}-admin-kubeconfig -o json \
+ADMIN_KUBECONFIG_SECRET=$(kubectl -n ${TENANT_NAMESPACE} get tcp ${TENANT_NAME} -o jsonpath='{.status.kubeconfig.admin.secretName}')
+kubectl get secrets -n ${TENANT_NAMESPACE} ${ADMIN_KUBECONFIG_SECRET} -o json \
   | jq -r '.data["admin.conf"]' \
   | base64 --decode \
   > ${TENANT_NAMESPACE}-${TENANT_NAME}.kubeconfig

@@ -149,10 +149,10 @@ kubectl get tcp -w
 
 - You can attempt to get the details of the control plane by downloading the `kubeconfig` file
 
-```
-# Set the SECRET as KUBECONFIG column listed in the tcp output.
-SECRET=""
-kubectl get secret $SECRET -o jsonpath='{.data.admin\.conf}'|base64 -d > /tmp/kamaji.conf
+```bash
+# Set the SECRET as KUBECONFIG column listed in the tcp output (e.g. kamaji-sample-admin-kubeconfig)
+SECRET=$(kubectl get tcp kamaji-sample -o jsonpath='{.status.kubeconfig.admin.secretName}')
+kubectl get secret ${SECRET} -o jsonpath='{.data.admin\.conf}' | base64 -d > /tmp/kamaji.conf
 ```
 
 - (options) if you run kind in some specific systems with `docker bridge network`, eg macOS, you may need to access the `kind` container, and perform the `kubectl` actions:
@@ -163,13 +163,13 @@ docker exec -it $(docker container list | grep kamaji-control-plane | awk '{prin
 
 - Export the `kubeconfig` file to the environment variable `KUBECONFIG`
 
-```
+```bash
 export KUBECONFIG=/tmp/kamaji.conf
 ```
 
 - Notice that the `kubectl` version changes, and there are no nodes now.
 
-```
+```bash
 kubectl version
 kubectl get nodes
 ```
